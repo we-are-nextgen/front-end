@@ -4,7 +4,6 @@ import BadgeCard from "../components/Badge";
 import DomainWithTracksCard from "../components/Domain";
 import MilestoneCard from "../components/Milestone";
 import RecommendedActions from "../components/RecommendedActions";
-import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { getProfile } from "@/lib/controllers/profileController"
 import { getJourney } from "@/lib/controllers/journeyController"
 

@@ -65,3 +65,4 @@ export function DynamicIcon({ name, className }: { name: string; className?: str
   if (!LucideIcon) return null;
   return <LucideIcon className={className ?? "w-6 h-6"} />;
 }
+

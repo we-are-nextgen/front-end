@@ -74,7 +74,8 @@ export default async function DomainWithTracksCard({ profile }: { profile: any }
                     const isEnrolled = enrolledTrackIds.includes(track.id);
 
                     return (
-                        <div
+                        <Link
+                            href={`/track/${track.id}`}
                             key={track.id}
                             className={cn(
                                 "relative shrink-0 px-2 py-3 rounded-2xl border shadow-sm border-blue-200",
@@ -96,7 +97,7 @@ export default async function DomainWithTracksCard({ profile }: { profile: any }
                             </span>
 
                             <DifficultyIndicator level={track.difficultyLevel} />
-                        </div>
+                        </Link>
                     );
                 })}
 
