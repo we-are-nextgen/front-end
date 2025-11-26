@@ -16,4 +16,12 @@ export async function restClient<T>(endpoint: string, options?: AxiosRequestConf
   return response.data;
 }
 
+export async function restClientPost<T>(endpoint: string, options?: AxiosRequestConfig): Promise<T> {
+  const response = await api.request<T>({
+    url: endpoint,
+    ...options,
+  });
+  return response.data;
+}
+
 export default api;

@@ -1,7 +1,9 @@
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import DifficultyIndicator from "@/components/DifficultyIndicator";
+import { AlarmClock, AlarmClockCheck } from "lucide-react"
 
-export default function LabCard({ lab, completed }) {
+
+export default function LabCard({ lab, completed, current }) {
   return (
     <div className="p-3 rounded-xl bg-white shadow border hover:shadow-md transition cursor-pointer">
 
@@ -13,7 +15,8 @@ export default function LabCard({ lab, completed }) {
 
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900">
-            {completed && <span className="text-green-500">✓ </span>}
+            {completed && <AlarmClockCheck />}
+            {current==lab.id && <AlarmClock />}
             {lab.name}
           </h3>
 

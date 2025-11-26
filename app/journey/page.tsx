@@ -2,7 +2,7 @@ import { getJourney } from "@/lib/controllers/journeyController"
 import { JourneyCard } from "@/components/journey-card"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, Code, GitBranch, TrendingUp, Trophy } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 
