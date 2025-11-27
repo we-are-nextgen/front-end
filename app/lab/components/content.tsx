@@ -128,7 +128,7 @@ export default function LabContent({ lab }) {
 // ----------------------------------------
 function ExerciseCard({ exercise }) {
   return (
-    <div className="border rounded-lg p-4 bg-gray-50">
+    <div className="border rounded-lg p-4">
       <h3 className="font-semibold text-lg">{exercise.title}</h3>
       <p className="text-sm text-gray-600 whitespace-pre-line">
         {exercise.question}
