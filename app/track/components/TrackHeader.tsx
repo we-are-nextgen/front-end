@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import  DifficultyIndicator  from "@/components/DifficultyIndicator";
+import DifficultyIndicator from "@/components/DifficultyIndicator";
 
 //import { enrollInTrack } from "@/lib/controllers/trackController";
 
@@ -22,16 +22,16 @@ export default function TrackHeader({ track, progress }) {
   }
 
   const enrolled = progress.enrolled;
+  const completed = progress.completed;
 
   return (
     <div className="p-4 rounded-xl bg-white shadow-md border flex items-start gap-4">
-
       <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center shadow">
         <DynamicIcon name={track.icon} className="w-7 h-7 text-white" />
       </div>
 
       <div className="flex-1">
-        <h1 className="text-2xl font-bold text-gray-900">{track.name}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{track.name} </h1>
         <p className="text-gray-600 text-sm">{track.description}</p>
 
         <div className="flex items-center gap-3 mt-2">
@@ -49,7 +49,12 @@ export default function TrackHeader({ track, progress }) {
 
       {/* Enroll/Continue button */}
       {/* Button */}
-      {!enrolled ? (
+      {completed ? (
+        <div className="flex items-center text-green-700 font-medium">
+          <DynamicIcon name="Award" className="w-7 h-7 text-green" />
+          Completed
+        </div>
+      ) : !enrolled ? (
         <button
           onClick={handleEnroll}
           className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
@@ -65,6 +70,7 @@ export default function TrackHeader({ track, progress }) {
         </button>
       )}
 
+
       {/**  
       <button
         className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
@@ -78,7 +84,7 @@ export default function TrackHeader({ track, progress }) {
         {progress.enrolled ? "Continue" : "Enroll Now"}
       </button>
     */}
-      
+
 
     </div>
   );

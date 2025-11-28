@@ -4,11 +4,17 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { completeLab } from "@/lib/controllers/labController";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import Split from "react-split";
 
-export default function LabContent({ lab }) {
+
+export default function LabContent({ labWithProgress }) {
+  const lab=labWithProgress?.lab;
+  const progress=labWithProgress?.progress;
   const [markdown, setMarkdown] = useState("");
   const [html, setHtml] = useState("");
+
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null);
+  
 
   // Fetch markdown / html content from URLs
   useEffect(() => {
@@ -29,8 +35,9 @@ export default function LabContent({ lab }) {
     }
   }, [lab]);
 
+  
   return (
-    <div className="h-screen flex flex-col prose max-w-full">
+    <div className="h-screen flex flex-col prose max-w-full pr-2 pl-2">
         {/* Header */}
          <div className="p-6 border-b shadow flex items-center gap-4">
               <DynamicIcon name={lab.icon} className="w-10 h-10 text-indigo-600" />
@@ -50,7 +57,7 @@ export default function LabContent({ lab }) {
       {/* MARK AS COMPLETED */}
       <button
         onClick={async () => {
-          await completeLab(lab.id);
+          await completeLab(lab.id,progress?.learninTrackId);
           alert("Lab marked as completed!");
         }}
         className="px-4 py-2 mt-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
@@ -58,12 +65,38 @@ export default function LabContent({ lab }) {
         Mark as Completed
       </button>
 
+
+      <button
+        onClick={async () => {
+          const payload = {
+            labId: lab.id,
+            submissions: Object.entries(answers).map(([exId, answer]) => ({
+              exerciseId: Number(exId),
+              answer
+            }))
+          };
+
+          const res = await fetch("/api/labs/grade", {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "application/json" }
+          });
+
+          const data = await res.json();
+          setResult(data);
+        }}
+        className="px-4 py-2 bg-blue-600 text-white rounded-lg mt-4"
+      >
+        Grade Lab
+      </button>
+
       <hr className="my-6" />
 
       {/* Lab Content Files */}
 
       {/* Markdown content */}
-      {markdown && (
+      {/*  remove false to show content */}
+      {markdown && false && (
         <div className="mt-4 border rounded-lg p-3 shadow-sm">
           <div className="max-h-[200px] overflow-y-auto prose">
             <ReactMarkdown>{markdown}</ReactMarkdown>
@@ -72,7 +105,8 @@ export default function LabContent({ lab }) {
       )}
 
       {/* HTML content */}
-      {html && (
+      {/*  remove false to show content */}
+      {html && false && (
         <div className="mt-4 border rounded-lg p-3 shadow-sm">
           <div
             className="max-h-[200px] overflow-y-auto prose"
@@ -81,7 +115,7 @@ export default function LabContent({ lab }) {
         </div>
       )}
 
-      <hr className="my-6" />
+      <hr className="my-2" />
 
       {/* Assets Section */}
       {lab.assets?.length > 0 && (
@@ -114,7 +148,7 @@ export default function LabContent({ lab }) {
 
           <div className="flex flex-col gap-6">
             {lab.exercises.map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} />
+              <ExerciseCard key={ex.id} exercise={ex} labId={lab.id} />
             ))}
           </div>
         </div>
@@ -126,20 +160,44 @@ export default function LabContent({ lab }) {
 // ----------------------------------------
 // EXERCISE COMPONENT
 // ----------------------------------------
-function ExerciseCard({ exercise }) {
+
+import { gradeExercise } from "@/lib/controllers/exerciseController";
+import { Console } from "console";
+
+function ExerciseCard({ exercise, labId }) {
+  const [answer, setAnswer] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  async function submitAnswer() {
+    setLoading(true);
+    console.log("labId ======> " + labId);
+    console.log("exercise.id ======> " + exercise.id);
+    console.log("answer ======> " + answer);
+    const res = await gradeExercise(labId, exercise.id, answer);
+    setResult(res);
+    setLoading(false);
+  }
+
   return (
-    <div className="border rounded-lg p-4">
+    <div className="border rounded-lg p-4 shadow-sm">
       <h3 className="font-semibold text-lg">{exercise.title}</h3>
-      <p className="text-sm text-gray-600 whitespace-pre-line">
+      <p className="text-sm text-gray-600 whitespace-pre-line mb-3">
         {exercise.question}
       </p>
 
+      {/* MCQ */}
       {exercise.type === "MCQ" && (
         <ul className="mt-3">
           {JSON.parse(exercise.optionsJson || "[]").map((opt, idx) => (
             <li key={idx} className="mt-1">
-              <label className="flex items-center gap-2">
-                <input type="radio" name={`ex-${exercise.id}`} />
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name={`ex-${exercise.id}`}
+                  value={opt}
+                  onChange={(e) => setAnswer(e.target.value)}
+                />
                 {opt}
               </label>
             </li>
@@ -147,36 +205,73 @@ function ExerciseCard({ exercise }) {
         </ul>
       )}
 
+      {/* TRUE/FALSE */}
       {exercise.type === "TRUE_FALSE" && (
         <div className="mt-3">
-          <label className="flex items-center gap-2">
-            <input type="radio" name={`ex-${exercise.id}`} />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name={`ex-${exercise.id}`}
+              value="true"
+              onChange={(e) => setAnswer(e.target.value)}
+            />
             True
           </label>
-          <label className="flex items-center gap-2">
-            <input type="radio" name={`ex-${exercise.id}`} />
+
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name={`ex-${exercise.id}`}
+              value="false"
+              onChange={(e) => setAnswer(e.target.value)}
+            />
             False
           </label>
         </div>
       )}
 
+      {/* CODE */}
       {exercise.type === "CODE" && (
         <textarea
           placeholder="Write your code here..."
           className="w-full border rounded p-2 mt-2 text-sm font-mono"
           rows={6}
-        ></textarea>
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+        />
       )}
 
+      {/* TEXT */}
       {exercise.type === "TEXT" && (
         <textarea
-          placeholder="Write your answer here..."
+          placeholder="Write your explanation here..."
           className="w-full border rounded p-2 mt-2 text-sm"
           rows={4}
-        ></textarea>
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+        />
       )}
 
-      {/* Points */}
+      {/* SUBMIT BUTTON */}
+      <button
+        onClick={submitAnswer}
+        disabled={loading}
+        className="mt-3 px-3 py-1 bg-indigo-600 text-white rounded shadow text-sm hover:bg-indigo-700"
+      >
+        {loading ? "Checking..." : "Submit Answer"}
+      </button>
+
+      {/* RESULT FEEDBACK */}
+      {result && (
+        <div
+          className={`mt-3 text-sm font-semibold ${
+            result.correct ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {result.message}
+        </div>
+      )}
+
       <div className="text-xs text-gray-500 mt-2">
         {exercise.points} points
       </div>
