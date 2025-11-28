@@ -1,9 +1,12 @@
 import { restClient } from "@/lib/services/restClient";
-
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 
 export async function gradeExercise(labId: number, exerciseId: number, answer: any) {
+  const session = await getServerSession(authOptions);
   const payload = {
     labId: labId,
+    userId: session?.user?.email,
     submissions: [
       { exerciseId: exerciseId, answer: answer }
     ],
@@ -15,23 +18,12 @@ export async function gradeExercise(labId: number, exerciseId: number, answer: a
 }
 
 
-
-export async function gradeExercise1(labId: number, exerciseId: number, answer: any) {
-  const payload = {
-    labId: labId,
-    submissions: [
-      { exerciseId: exerciseId, answer: answer }
-    ],
-  };
-
-  
-
+export async function gradeAllExercises( payload: any) {
   return restClient(`labs/grade`, {
     method: "POST",
-    data: JSON.stringify({
-      labId,
-      exerciseId,
-      answer
-    }),
+    data: payload,
   });
 }
+
+
+

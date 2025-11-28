@@ -4,17 +4,71 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { completeLab } from "@/lib/controllers/labController";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { gradeExercise, gradeAllExercises } from "@/lib/controllers/exerciseController";
 
 export default function LabContent({ labWithProgress }) {
   const lab=labWithProgress?.lab;
   const progress=labWithProgress?.progress;
+  const submissions = labWithProgress?.exerciseSubmission;
+
   const [markdown, setMarkdown] = useState("");
   const [html, setHtml] = useState("");
-
-  const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null);
   
+  let total = lab.exercises.reduce(
+    (sum, item) => sum + (item.points ?? 0),
+    0
+  );
 
+  const earned = submissions.reduce(
+    (sum, item) => sum + (item.earnedPoints ?? 0),
+    0
+  );
+
+  const details = submissions.reduce((acc, item) => {
+    acc[item.id] = item.earnedPoints ?? 0;
+    return acc;
+  }, {} as Record<number, number>);
+  
+  const initialResults = {
+    "total": total,
+    "earned" : earned,
+    "details": details
+  }
+  
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(initialResults);
+  
+  async function submitAllAnswers() {
+    const payload = {
+      labId: lab.id,
+      submissions: Object.entries(answers).map(([exerciseId, answer]) => ({
+        exerciseId: Number(exerciseId),
+        answer,
+      })),
+    };
+
+    const res = await fetch("/api/lab/grade", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }).then(r => r.json());
+
+    setResult(res);
+  }
+
+
+  async function submitAllAnswers1() {
+    const payload = {
+      labId: lab.id,
+      submissions: Object.entries(answers).map(([exerciseId, answer]) => ({
+        exerciseId: Number(exerciseId),
+        answer,
+      })),
+    };
+    const res = await gradeAllExercises(payload);
+    setResult(res);
+  }
+
+  
   // Fetch markdown / html content from URLs
   useEffect(() => {
     if (lab.contentMarkdownUrl) {
@@ -34,13 +88,14 @@ export default function LabContent({ labWithProgress }) {
     }
   }, [lab]);
 
-  
+  function handleAnswerChange(exerciseId, answer) {
+    setAnswers((prev) => ({ ...prev, [exerciseId]: answer }));
+  }
   return (
     <div className="h-screen flex flex-col prose max-w-full pr-2 pl-2">
         {/* Header */}
          <div className="p-6 border-b shadow flex items-center gap-4">
               <DynamicIcon name={lab.icon} className="w-10 h-10 text-indigo-600" />
-      
               <div>
                 <h1 className="text-2xl font-bold">{lab.name}</h1>
                 <p className="text-gray-600">{lab.description}</p>
@@ -51,45 +106,68 @@ export default function LabContent({ labWithProgress }) {
                   {lab.hasBonusTasks && <span className="text-green-600">+ Bonus Tasks</span>}
                 </div>
               </div>
-            </div>
+          </div>
 
       {/* MARK AS COMPLETED */}
-      <button
-        onClick={async () => {
-          await completeLab(lab.id,progress?.learninTrackId);
-          alert("Lab marked as completed!");
-        }}
-        className="px-4 py-2 mt-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
-      >
-        Mark as Completed
-      </button>
+      <div className="flex gap-4 mt-2">
+        <button
+          onClick={async () => {
+            await completeLab(lab.id, progress?.learninTrackId);
+            alert("Lab marked as completed!");
+          }}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
+        >
+          Mark as Completed
+        </button>
+
+        <button
+          onClick={submitAllAnswers}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+        >
+          Grade Lab
+        </button>
+      </div>
 
 
-      <button
-        onClick={async () => {
-          const payload = {
-            labId: lab.id,
-            submissions: Object.entries(answers).map(([exId, answer]) => ({
-              exerciseId: Number(exId),
-              answer
-            }))
-          };
+       {result && (
+        <div className="mt-6 text-xs">
+          {/* Summary Card */}
+          <div className="p-4 border rounded-lg shadow max-w-md mx-auto">
+            <div className="flex justify-between mb-2">
+              <span>Earned Points:</span>
+              <span>{result.earned} / {result.total}</span>
+            </div>
+            <div className="w-full bg-gray-200 h-4 rounded-full">
+              <div
+                className="bg-green-500 h-4 rounded-full"
+                style={{ width: `${(result.earned / result.total) * 100}%` }}
+              />
+            </div>
+          </div>
 
-          const res = await fetch("/api/labs/grade", {
-            method: "POST",
-            body: JSON.stringify(payload),
-            headers: { "Content-Type": "application/json" }
-          });
+          {/* Detailed Breakdown */}
+          <table className="w-full mt-4 border-collapse max-w-md mx-auto">
+            <thead>
+              <tr>
+                <th className="border px-3 py-1 text-left">Exercise</th>
+                <th className="border px-3 py-1 text-right">Points Earned</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(result.details).map(([exerciseId, points]) => (
+                <tr key={exerciseId}>
+                  <td className="border px-3 py-1">Exercise {exerciseId}</td>
+                  <td className={`border px-3 py-1 text-right ${points === 0 ? "text-red-600" : "text-green-600"}`}>
+                    {points}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-          const data = await res.json();
-          setResult(data);
-        }}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg mt-4"
-      >
-        Grade Lab
-      </button>
-
-      <hr className="my-6" />
+      <hr className="my-2" />
 
       {/* Lab Content Files */}
 
@@ -147,7 +225,7 @@ export default function LabContent({ labWithProgress }) {
 
           <div className="flex flex-col gap-6">
             {lab.exercises.map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} labId={lab.id} />
+              <ExerciseCard key={ex.id} exercise={ex} labId={lab.id} onAnswerChange={handleAnswerChange}/>
             ))}
           </div>
         </div>
@@ -160,31 +238,31 @@ export default function LabContent({ labWithProgress }) {
 // EXERCISE COMPONENT
 // ----------------------------------------
 
-import { gradeExercise } from "@/lib/controllers/exerciseController";
 
-function ExerciseCard({ exercise, labId }) {
+
+function ExerciseCard({ exercise, labId, onAnswerChange }) {
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
+  function handleAnswerChange(value) {
+    setAnswer(value);
+    onAnswerChange(exercise.id, value); // Report to parent
+  }
+
   async function submitAnswer() {
     setLoading(true);
     const res = await gradeExercise(labId, exercise.id, answer);
     setResult(res);
     setLoading(false);
-    // Show alert dialog
-    if (res.earned > 0) {
-      alert("✅ Correct answer!");
-    } else {
-      alert("❌ Incorrect answer.");
-    }
+    // Optional alert
+    //alert(res.earned>0 ? `✅ Correct Answer ` : `❌ Incorrect Answer`);
   }
+
   return (
     <div className="border rounded-lg p-4 shadow-sm">
       <h3 className="font-semibold text-lg">{exercise.title}</h3>
-      <p className="text-sm text-gray-600 whitespace-pre-line mb-3">
-        {exercise.question}
-      </p>
+      <p className="text-sm text-gray-600 whitespace-pre-line mb-3">{exercise.question}</p>
 
       {/* MCQ */}
       {exercise.type === "MCQ" && (
@@ -196,7 +274,8 @@ function ExerciseCard({ exercise, labId }) {
                   type="radio"
                   name={`ex-${exercise.id}`}
                   value={opt}
-                  onChange={(e) => setAnswer(e.target.value)}
+                  checked={answer === opt}
+                  onChange={(e) => handleAnswerChange(e.target.value)}
                 />
                 {opt}
               </label>
@@ -208,51 +287,32 @@ function ExerciseCard({ exercise, labId }) {
       {/* TRUE/FALSE */}
       {exercise.type === "TRUE_FALSE" && (
         <div className="mt-3">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name={`ex-${exercise.id}`}
-              value="true"
-              onChange={(e) => setAnswer(e.target.value)}
-            />
-            True
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name={`ex-${exercise.id}`}
-              value="false"
-              onChange={(e) => setAnswer(e.target.value)}
-            />
-            False
-          </label>
+          {["true", "false"].map((val) => (
+            <label key={val} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name={`ex-${exercise.id}`}
+                value={val}
+                checked={answer === val}
+                onChange={(e) => handleAnswerChange(e.target.value)}
+              />
+              {val.charAt(0).toUpperCase() + val.slice(1)}
+            </label>
+          ))}
         </div>
       )}
 
-      {/* CODE */}
-      {exercise.type === "CODE" && (
+      {/* CODE / TEXT */}
+      {["CODE", "TEXT"].includes(exercise.type) && (
         <textarea
-          placeholder="Write your code here..."
+          placeholder="Write your answer here..."
           className="w-full border rounded p-2 mt-2 text-sm font-mono"
-          rows={6}
+          rows={exercise.type === "CODE" ? 6 : 4}
           value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
+          onChange={(e) => handleAnswerChange(e.target.value)}
         />
       )}
 
-      {/* TEXT */}
-      {exercise.type === "TEXT" && (
-        <textarea
-          placeholder="Write your explanation here..."
-          className="w-full border rounded p-2 mt-2 text-sm"
-          rows={4}
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-        />
-      )}
-
-      {/* SUBMIT BUTTON */}
       <button
         onClick={submitAnswer}
         disabled={loading}
@@ -261,20 +321,13 @@ function ExerciseCard({ exercise, labId }) {
         {loading ? "Checking..." : "Submit Answer"}
       </button>
 
-      {/* RESULT FEEDBACK */}
       {result && (
-        <div
-          className={`mt-3 text-sm font-semibold ${
-            result.correct ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {result.message}
+        <div className={`mt-3 text-sm font-semibold ${result.correct ? "text-green-600" : "text-white-600"}`}>
+          {result.earned > 0 ? "Correct!" : "Incorrect."} You earned {result.earned} out of {result.total} points.
         </div>
       )}
 
-      <div className="text-xs text-gray-500 mt-2">
-        {exercise.points} points
-      </div>
+      <div className="text-xs text-gray-500 mt-2">{exercise.points} points</div>
     </div>
   );
 }
