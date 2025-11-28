@@ -1,12 +1,13 @@
-import { getLabWithProgress, getLab} from "@/lib/controllers/labController";
+import { getLabWithProgress } from "@/lib/controllers/labController";
 import LabView from "../components/LabView";
 
-export default async function LabPage(props: { params: Promise<{ id: string }> }) {
-  
-  const { id } = await props.params;
-  const lab = await getLabWithProgress(id);
-  //const lab = await getLab(labId);
-  //const res = await fetch(`/api/lab/${labId}`, { method: "POST" });
-  //const lab = await res.json();
+interface LabPageProps {
+  params: Promise<{ id: string }>; 
+}
+
+export default async function LabPage({ params }: LabPageProps) {
+  const { id } = await params; // unwrap the Promise
+  const lab = await getLabWithProgress(Number(id));
+  if (!lab) return <div>No lab found</div>;
   return <LabView labWithProgress={lab} />;
 }

@@ -5,7 +5,6 @@ import ReactMarkdown from "react-markdown";
 import { completeLab } from "@/lib/controllers/labController";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
-
 export default function LabContent({ labWithProgress }) {
   const lab=labWithProgress?.lab;
   const progress=labWithProgress?.progress;
@@ -162,23 +161,24 @@ export default function LabContent({ labWithProgress }) {
 // ----------------------------------------
 
 import { gradeExercise } from "@/lib/controllers/exerciseController";
-import { Console } from "console";
 
 function ExerciseCard({ exercise, labId }) {
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  
   async function submitAnswer() {
     setLoading(true);
-    console.log("labId ======> " + labId);
-    console.log("exercise.id ======> " + exercise.id);
-    console.log("answer ======> " + answer);
     const res = await gradeExercise(labId, exercise.id, answer);
     setResult(res);
     setLoading(false);
+    // Show alert dialog
+    if (res.earned > 0) {
+      alert("✅ Correct answer!");
+    } else {
+      alert("❌ Incorrect answer.");
+    }
   }
-
   return (
     <div className="border rounded-lg p-4 shadow-sm">
       <h3 className="font-semibold text-lg">{exercise.title}</h3>

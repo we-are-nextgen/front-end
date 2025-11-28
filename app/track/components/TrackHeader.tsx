@@ -4,8 +4,6 @@ import { useRouter } from "next/navigation";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import DifficultyIndicator from "@/components/DifficultyIndicator";
 
-//import { enrollInTrack } from "@/lib/controllers/trackController";
-
 export default function TrackHeader({ track, progress }) {
   const router = useRouter();
 
