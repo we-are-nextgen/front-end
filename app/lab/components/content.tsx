@@ -1,34 +1,38 @@
 "use client";
+import React, { useState, useEffect } from "react";
 
-import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { completeLab } from "@/lib/controllers/labController";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { gradeExercise, gradeAllExercises } from "@/lib/controllers/exerciseController";
+import { gradeAllExercises } from "@/lib/controllers/exerciseController";
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function LabContent({ labWithProgress }) {
   const lab=labWithProgress?.lab;
   const progress=labWithProgress?.progress;
   const submissions = labWithProgress?.exerciseSubmission;
-
   const [markdown, setMarkdown] = useState("");
   const [html, setHtml] = useState("");
   
+
   let total = lab.exercises.reduce(
     (sum, item) => sum + (item.points ?? 0),
     0
   );
-
   const earned = submissions.reduce(
     (sum, item) => sum + (item.earnedPoints ?? 0),
     0
   );
-
-  const details = submissions.reduce((acc, item) => {
-    acc[item.id] = item.earnedPoints ?? 0;
+  const details =  submissions.reduce((acc, s) => {
+    acc[s.id] = {
+      answer: s.answer,
+      score: s.earnedPoints
+    };
     return acc;
-  }, {} as Record<number, number>);
-  
+  }, {})
+    
   const initialResults = {
     "total": total,
     "earned" : earned,
@@ -36,8 +40,19 @@ export default function LabContent({ labWithProgress }) {
   }
   
   const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(initialResults);
+  const [result, setResult] = useState(null);
+  const [completed, setCompleted] = useState(progress.completed);
   
+  
+  // delay load submissions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setResult(initialResults);
+    }, 500); // delay 0.5 second
+
+    return () => clearTimeout(timer); // cleanup
+  }, []);
+
   async function submitAllAnswers() {
     const payload = {
       labId: lab.id,
@@ -46,7 +61,6 @@ export default function LabContent({ labWithProgress }) {
         answer,
       })),
     };
-
     const res = await fetch("/api/lab/grade", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -54,7 +68,6 @@ export default function LabContent({ labWithProgress }) {
 
     setResult(res);
   }
-
 
   async function submitAllAnswers1() {
     const payload = {
@@ -91,6 +104,7 @@ export default function LabContent({ labWithProgress }) {
   function handleAnswerChange(exerciseId, answer) {
     setAnswers((prev) => ({ ...prev, [exerciseId]: answer }));
   }
+
   return (
     <div className="h-screen flex flex-col prose max-w-full pr-2 pl-2">
         {/* Header */}
@@ -108,11 +122,14 @@ export default function LabContent({ labWithProgress }) {
               </div>
           </div>
 
+      {/* allow buttons if lab is not completed */}
       {/* MARK AS COMPLETED */}
+      {!completed &&
       <div className="flex gap-4 mt-2">
         <button
           onClick={async () => {
             await completeLab(lab.id, progress?.learninTrackId);
+            setCompleted(true);
             alert("Lab marked as completed!");
           }}
           className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
@@ -127,13 +144,22 @@ export default function LabContent({ labWithProgress }) {
           Grade Lab
         </button>
       </div>
-
+      }
+      {completed &&
+        <Link href={`/track/${progress.learninTrackId}`}>
+          <Button variant="ghost" className="mb-0">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Track
+          </Button>
+        </Link>
+        
+      }
 
        {result && (
-        <div className="mt-6 text-xs">
+        <div className="mt-2 text-xs">
           {/* Summary Card */}
-          <div className="p-4 border rounded-lg shadow max-w-md mx-auto">
-            <div className="flex justify-between mb-2">
+          <div className="p-2 border rounded-lg shadow max-w-md mx-auto">
+            <div className="flex justify-between mb-1">
               <span>Earned Points:</span>
               <span>{result.earned} / {result.total}</span>
             </div>
@@ -146,7 +172,7 @@ export default function LabContent({ labWithProgress }) {
           </div>
 
           {/* Detailed Breakdown */}
-          <table className="w-full mt-4 border-collapse max-w-md mx-auto">
+          <table className="w-full mt-2 border-collapse max-w-md mx-auto">
             <thead>
               <tr>
                 <th className="border px-3 py-1 text-left">Exercise</th>
@@ -154,11 +180,11 @@ export default function LabContent({ labWithProgress }) {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(result.details).map(([exerciseId, points]) => (
+              {Object.entries(result.details).map(([exerciseId, detail]) => (
                 <tr key={exerciseId}>
                   <td className="border px-3 py-1">Exercise {exerciseId}</td>
-                  <td className={`border px-3 py-1 text-right ${points === 0 ? "text-red-600" : "text-green-600"}`}>
-                    {points}
+                  <td className={`border px-3 py-1 text-right ${detail.score === 0 ? "text-red-600" : "text-green-600"}`}>
+                    {detail.score}
                   </td>
                 </tr>
               ))}
@@ -167,10 +193,7 @@ export default function LabContent({ labWithProgress }) {
         </div>
       )}
 
-      <hr className="my-2" />
-
       {/* Lab Content Files */}
-
       {/* Markdown content */}
       {/*  remove false to show content */}
       {markdown && false && (
@@ -216,7 +239,7 @@ export default function LabContent({ labWithProgress }) {
         </div>
       )}
 
-      <hr className="my-6" />
+      <hr className="my-2" />
 
       {/* Exercises Section */}
       {lab.exercises?.length > 0 && (
@@ -225,7 +248,9 @@ export default function LabContent({ labWithProgress }) {
 
           <div className="flex flex-col gap-6">
             {lab.exercises.map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} labId={lab.id} onAnswerChange={handleAnswerChange}/>
+              <ExerciseCard key={ex.id} exercise={ex}  
+                initialSubmission={initialResults}
+                onAnswerChange={handleAnswerChange}/>
             ))}
           </div>
         </div>
@@ -240,23 +265,20 @@ export default function LabContent({ labWithProgress }) {
 
 
 
-function ExerciseCard({ exercise, labId, onAnswerChange }) {
-  const [answer, setAnswer] = useState("");
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+function ExerciseCard({ exercise, onAnswerChange, initialSubmission }) {
+  // Map initialSubmission.details[exercise.id] to earnedPoints
+  const earnedPoints = initialSubmission?.details?.[exercise.id]?.score ?? 0;
+  const prevAnswer = initialSubmission?.details?.[exercise.id]?.answer ?? null;
+
+  const [answer, setAnswer] = React.useState(prevAnswer); // optional: if you have previous answer, you can pass it
+  const [result, setResult] = React.useState(
+    earnedPoints > 0 ? { earnedPoints, total: exercise.points, correct: earnedPoints > 0 } : null
+  );
+
 
   function handleAnswerChange(value) {
     setAnswer(value);
-    onAnswerChange(exercise.id, value); // Report to parent
-  }
-
-  async function submitAnswer() {
-    setLoading(true);
-    const res = await gradeExercise(labId, exercise.id, answer);
-    setResult(res);
-    setLoading(false);
-    // Optional alert
-    //alert(res.earned>0 ? `✅ Correct Answer ` : `❌ Incorrect Answer`);
+    onAnswerChange(exercise.id, value);
   }
 
   return (
@@ -313,17 +335,9 @@ function ExerciseCard({ exercise, labId, onAnswerChange }) {
         />
       )}
 
-      <button
-        onClick={submitAnswer}
-        disabled={loading}
-        className="mt-3 px-3 py-1 bg-indigo-600 text-white rounded shadow text-sm hover:bg-indigo-700"
-      >
-        {loading ? "Checking..." : "Submit Answer"}
-      </button>
-
       {result && (
-        <div className={`mt-3 text-sm font-semibold ${result.correct ? "text-green-600" : "text-white-600"}`}>
-          {result.earned > 0 ? "Correct!" : "Incorrect."} You earned {result.earned} out of {result.total} points.
+        <div className={`mt-3 text-sm font-semibold ${result.correct ? "text-green-600" : "text-red-600"}`}>
+          {result.correct ? "Correct!" : "Incorrect."} You earned {result.earnedPoints} out of {result.total} points.
         </div>
       )}
 
