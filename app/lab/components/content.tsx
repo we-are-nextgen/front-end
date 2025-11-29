@@ -16,6 +16,10 @@ export default function LabContent({ labWithProgress }) {
   const [markdown, setMarkdown] = useState("");
   const [html, setHtml] = useState("");
   
+  function getExerciseTitle(lab, exerciseId) {
+    const ex = lab.exercises.find(e => e.id === exerciseId);
+    return ex?.title ?? null;   // return null if not found
+  }
 
   let total = lab.exercises.reduce(
     (sum, item) => sum + (item.points ?? 0),
@@ -28,7 +32,9 @@ export default function LabContent({ labWithProgress }) {
   const details =  submissions.reduce((acc, s) => {
     acc[s.id] = {
       answer: s.answer,
-      score: s.earnedPoints
+      score: s.earnedPoints,
+      exerciseId: s.exerciseId,
+      question: getExerciseTitle(lab, s.exerciseId)
     };
     return acc;
   }, {})
@@ -126,6 +132,11 @@ export default function LabContent({ labWithProgress }) {
       {/* MARK AS COMPLETED */}
       {!completed &&
       <div className="flex gap-4 mt-2">
+        <Link href={`/track/${progress.learninTrackId}`}>
+          <Button variant="ghost" className="mb-0">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+          </Button>
+        </Link>
         <button
           onClick={async () => {
             await completeLab(lab.id, progress?.learninTrackId);
@@ -141,18 +152,23 @@ export default function LabContent({ labWithProgress }) {
           onClick={submitAllAnswers}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg"
         >
-          Grade Lab
+          Grade Excercises
         </button>
       </div>
       }
       {completed &&
+        <div className="flex gap-4">
         <Link href={`/track/${progress.learninTrackId}`}>
           <Button variant="ghost" className="mb-0">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Track
           </Button>
         </Link>
-        
+        <div className="flex items-center text-green-700">
+          <DynamicIcon name="Award" className="w-7 h-7 text-green" />
+          Completed
+        </div>
+        </div>
       }
 
        {result && (
@@ -182,7 +198,7 @@ export default function LabContent({ labWithProgress }) {
             <tbody>
               {Object.entries(result.details).map(([exerciseId, detail]) => (
                 <tr key={exerciseId}>
-                  <td className="border px-3 py-1">Exercise {exerciseId}</td>
+                  <td className="border px-3 py-1">{detail.question}</td>
                   <td className={`border px-3 py-1 text-right ${detail.score === 0 ? "text-red-600" : "text-green-600"}`}>
                     {detail.score}
                   </td>
@@ -268,7 +284,7 @@ export default function LabContent({ labWithProgress }) {
 function ExerciseCard({ exercise, onAnswerChange, initialSubmission }) {
   // Map initialSubmission.details[exercise.id] to earnedPoints
   const earnedPoints = initialSubmission?.details?.[exercise.id]?.score ?? 0;
-  const prevAnswer = initialSubmission?.details?.[exercise.id]?.answer ?? null;
+  const prevAnswer = initialSubmission?.details?.[exercise.id]?.answer ?? "";
 
   const [answer, setAnswer] = React.useState(prevAnswer); // optional: if you have previous answer, you can pass it
   const [result, setResult] = React.useState(

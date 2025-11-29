@@ -1,56 +1,84 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Terminal as XTerm } from "xterm";
+import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 
-export default function Terminal() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const terminalRef = useRef<XTerm | null>(null);
+export default function XTermTerminal({ onCommand }) {
+  const containerRef = useRef(null);
+  const terminalRef = useRef(null);
+  const fitAddonRef = useRef(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const fitAddon = new FitAddon();
-    const xterm = new XTerm({
-      fontSize: 14,
+    const term = new Terminal({
       cursorBlink: true,
+      fontSize: 14,
       theme: {
-        background: "#1e1e1e",
-        foreground: "#ffffff",
+        background: "#000000",
+        foreground: "#FFFFFF",
       },
     });
 
-    xterm.loadAddon(fitAddon);
-    xterm.open(containerRef.current);
+    const fitAddon = new FitAddon();
+
+    terminalRef.current = term;
+    fitAddonRef.current = fitAddon;
+
+    term.loadAddon(fitAddon);
+    term.open(containerRef.current);
     fitAddon.fit();
 
-    // Welcome message — gentle, not shouting
-    xterm.write("Welcome to the sandbox terminal.\r\n$ ");
+    let buffer = ""; // user input buffer
 
-    // Basic echo command
-    xterm.onKey(({ key, domEvent }) => {
-      const char = key;
-      const ev = domEvent;
+    const prompt = () => {
+      term.write("\r\n> ");
+    };
 
-      if (ev.key === "Enter") {
-        xterm.write("\r\n$ ");
-      } else if (ev.key === "Backspace") {
-        xterm.write("\b \b");
-      } else {
-        xterm.write(char);
+    prompt();
+
+    term.onData((data) => {
+      const code = data.charCodeAt(0);
+
+      // Handle ENTER
+      if (code === 13) {
+        term.write("\r\n");
+
+        if (onCommand) onCommand(buffer, term); // send command to parent
+
+        buffer = "";
+        prompt();
+        return;
+      }
+
+      // Handle BACKSPACE
+      if (code === 127) {
+        if (buffer.length > 0) {
+          buffer = buffer.slice(0, -1);
+
+          // Move cursor back, erase char, move cursor back again
+          term.write("\b \b");
+        }
+        return;
+      }
+
+      // Printable characters
+      if (code >= 32 && code <= 126) {
+        buffer += data;
+        term.write(data);
       }
     });
 
-    terminalRef.current = xterm;
-    return () => xterm.dispose();
-  }, []);
+    const handleResize = () => fitAddon.fit();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      term.dispose();
+    };
+  }, [onCommand]);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full h-64 rounded-lg overflow-hidden border shadow-inner bg-black"
-    />
+    <div ref={containerRef} className="w-full h-full bg-black rounded" />
   );
 }
