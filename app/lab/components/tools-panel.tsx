@@ -7,9 +7,10 @@ import { useState, useEffect } from "react";
 import XTermTerminal from "@/components/tools/Terminal";
 
 export default function ToolsPanel({ lab }) {
-  const [code, setCode] = useState("// write JS here");
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [activeTab, setActiveTab] = useState("code");
+
 
   // asset URLs
   //const htmlAsset = lab.lab.contentHtmlUrl;
@@ -48,7 +49,7 @@ export default function ToolsPanel({ lab }) {
         {activeTab === "code" && (
           <div>
             <p className="text-xs text-gray-500 mb-1">Editor</p>
-            <CodeEditor code={code} setCode={setCode} />
+            <CodeEditor code={code} setCode={setCode} language={lab.lab.language}/>
           </div>
         )}
 

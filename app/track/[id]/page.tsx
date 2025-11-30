@@ -6,6 +6,10 @@ import ProgressBar from "../components/ProgressBar";
 
 import { getTrackById, getUserTrackProgress } from "@/lib/controllers/trackController";
 
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
+
 export default async function TrackPage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
   const trackId =  Number(id);
@@ -19,6 +23,12 @@ export default async function TrackPage(props: { params: Promise<{ id: string }>
   return (
     <div className="max-w-4xl mx-auto space-y-6 pl-2 pr-2">
       <Header />
+      <Link href="/dashboard/it-professional">
+          <Button variant="ghost" className="mb-1">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Button>
+        </Link>
       <TrackHeader track={track} progress={progress} />
       <ProgressBar value={progress.enrolled?progress.progress:0} />
       <h2 className="text-xl font-bold text-white-900 mt-4">Labs</h2>
