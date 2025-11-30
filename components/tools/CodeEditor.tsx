@@ -24,3 +24,37 @@ export default function CodeEditor({ code, setCode, language = "javascript" }) {
     </div>
   );
 }
+
+// language values 
+// https://www.npmjs.com/package/@monaco-editor/react
+/* 
+languages that have rich IntelliSense and validation
+TypeScript
+JavaScript
+CSS
+LESS
+SCSS
+JSON
+HTML
+languages with only basic syntax colorization
+XML
+PHP
+C#
+C++
+Razor
+Markdown
+Diff
+Java
+VB
+CoffeeScript
+Handlebars
+Batch
+Pug
+F#
+Lua
+Powershell
+Python
+Ruby
+SASS
+R
+Objective-C */
