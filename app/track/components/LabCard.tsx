@@ -3,7 +3,8 @@ import DifficultyIndicator from "@/components/DifficultyIndicator";
 import { AlarmClock, AlarmClockCheck } from "lucide-react"
 
 
-export default function LabCard({ lab, completed, current }) {
+export default function LabCard({ lab, completedLab, trackEnrolled, current }) {
+  const completed = trackEnrolled && completedLab;
   return (
     <div className="p-3 rounded-xl bg-white shadow border hover:shadow-md transition cursor-pointer">
 
@@ -14,7 +15,7 @@ export default function LabCard({ lab, completed, current }) {
         </div>
 
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">
+          <h3 className="font-semibold text-gray-900 flex items-center gap-2">
             {completed && <AlarmClockCheck />}
             {current==lab.id && <AlarmClock />}
             {lab.name}
@@ -27,6 +28,7 @@ export default function LabCard({ lab, completed, current }) {
           <div className="flex items-center gap-3 mt-1">
             <DifficultyIndicator level={lab.difficultyLevel} />
             <span className="text-[10px] text-gray-500">{lab.estimatedTimeMin} min</span>
+            <span className="text-[10px] text-green-700"> {completed && " Earned " + completedLab.points + " pts"}</span>
           </div>
         </div>
 

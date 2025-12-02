@@ -6,7 +6,7 @@ import ToolsPanel from "./tools-panel";
 import Split from "react-split";
 
 
-export default function LabView({ labWithProgress }) {
+export default function LabView({ labWithProgress}) {
   const [lab, setLab] = useState(labWithProgress);
 
   return (
@@ -24,7 +24,7 @@ export default function LabView({ labWithProgress }) {
   
         {/* RIGHT — TOOLS */}
         <div className="w-1/2 overflow-y-auto">
-          <ToolsPanel lab={lab} />
+          <ToolsPanel lab={lab}/>
         </div>
         </Split>
       </div>

@@ -15,7 +15,7 @@ export default async function TrackPage(props: { params: Promise<{ id: string }>
   const trackId =  Number(id);
   const track = await getTrackById(trackId);
   const labs = track?.labs;
-  const progress= await getUserTrackProgress(trackId);
+  const progress= await getUserTrackProgress(trackId); 
 
   // Example structure: { enrolled: true, completedLabs: [1,2], progress: 40 }
   //const progress = { enrolled: true, completedLabs: [1], progress: 40 };
@@ -37,7 +37,8 @@ export default async function TrackPage(props: { params: Promise<{ id: string }>
           <LabCard
             key={lab.id}
             lab={lab}
-            completed={progress.enrolled && progress.completedLabs?.includes(lab.id)}
+            completedLab={progress.completedLabs.find(findLab => findLab.labId === lab.id)}
+            trackEnrolled={progress.enrolled}
             current={progress.currentLabId}
           />
         ))}

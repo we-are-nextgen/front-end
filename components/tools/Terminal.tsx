@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import "xterm/css/xterm.css";
 
-export default function XTermTerminal() {
+export default function XTermTerminal( { lab } ) {
   const containerRef = useRef(null);
   const termRef = useRef(null);
   const fitRef = useRef(null);
@@ -54,7 +54,7 @@ export default function XTermTerminal() {
   }, []);
 
   function connectWebSocket(term: any) {
-    const ws = new WebSocket("ws://localhost:8080/terminal");
+    const ws = new WebSocket("ws://localhost:8080/terminal/" + lab.userId  );
     socketRef.current = ws;
 
     let inputBuffer = "";
@@ -62,7 +62,7 @@ export default function XTermTerminal() {
     ws.onopen = () => {
       term.writeln("");
       term.writeln("\x1b[32mConnected to remote terminal.\x1b[0m");
-      term.write("> ");
+      //term.write("> ");
     };
 
     ws.onmessage = (event) => {
@@ -119,6 +119,7 @@ export default function XTermTerminal() {
         inputBuffer += data;
         term.write(data);
       }
+
     });
   }
 

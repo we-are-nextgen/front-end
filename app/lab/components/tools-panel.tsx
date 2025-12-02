@@ -55,7 +55,7 @@ export default function ToolsPanel({ lab }) {
 
         {activeTab === "terminal" && (
           <div className="h-full">
-          <XTermTerminal initialOutput={output} />
+          <XTermTerminal initialOutput={output} lab={lab}/>
         </div>
           
         )}
