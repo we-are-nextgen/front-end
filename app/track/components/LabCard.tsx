@@ -16,7 +16,7 @@ export default function LabCard({ lab, completedLab, trackEnrolled, current }) {
 
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-            {completed && <AlarmClockCheck />}
+            {current!=lab.id  && completed && <AlarmClockCheck />}
             {current==lab.id && <AlarmClock />}
             {lab.name}
           </h3>

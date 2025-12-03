@@ -133,7 +133,7 @@ export default function LabContent({ labWithProgress }) {
       {!completed &&
       <div className="flex gap-4 mt-2">
         <Link href={`/track/${progress.learninTrackId}`}>
-          <Button variant="ghost" className="mb-0">
+          <Button variant="ghost" className="mb-0 cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
           </Button>
         </Link>
@@ -143,14 +143,14 @@ export default function LabContent({ labWithProgress }) {
             setCompleted(true);
             alert("Lab marked as completed!");
           }}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 cursor-pointer"
         >
           Mark as Completed
         </button>
 
         <button
           onClick={submitAllAnswers}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer"
         >
           Grade Excercises
         </button>

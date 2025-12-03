@@ -55,14 +55,14 @@ export default function TrackHeader({ track, progress }) {
       ) : !enrolled ? (
         <button
           onClick={handleEnroll}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition cursor-pointer"
         >
           Enroll Now
         </button>
       ) : (
         <button
           onClick={handleContinue}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition cursor-pointer"
         >
           Continue
         </button>

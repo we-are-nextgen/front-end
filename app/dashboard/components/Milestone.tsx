@@ -3,7 +3,9 @@
 import { Rocket, Circle, ArrowRight, Play } from "lucide-react";
 
 export default function MilestoneCard({ profile = null }: { profile?: any }) {
-    const currentProgress = profile?.userProgress?.find(x => x.status === "In-Progress");
+    const currentProgress = profile?.userProgress?.length==1?
+                            profile?.userProgress[0]:
+                            profile?.userProgress?.find(x => x.status === "In-Progress");
     return (
         <div className="relative p-4 rounded-lg bg-white shadow-xl border border-indigo-100 overflow-hidden">
 
