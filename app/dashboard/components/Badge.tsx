@@ -86,7 +86,7 @@ export default function GamingBadgeCard({ profile = null }: { profile?: any }) {
 
                 {/* Date */}
                 <p className="text-[9px] text-gray-300 mt-1">
-                  {new Date(b.awardedAt).toLocaleDateString("en-US", {
+                  {new Date(b.earnedAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                   })}
