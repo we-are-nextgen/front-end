@@ -20,10 +20,11 @@ export default async function DashboardOverview() {
       <h1 className="text-2xl font-semibold">Welcome back 👋</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <StageCard profile={profile} />
+        { /* <StageCard profile={profile} /> */}
+        <MilestoneCard profile={profile} />
         <DomainWithTracksCard profile={profile} />
         <BadgeCard profile={profile} />
-        <MilestoneCard profile={profile} />
+        
 
       </div>
 
