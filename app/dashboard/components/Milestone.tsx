@@ -19,7 +19,7 @@ export default function MilestoneCard({ profile = null }: { profile?: any }) {
 
             <div className="flex items-center gap-3 mb-3">
                 <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 flex items-center justify-center shadow-lg border-2 border-yellow-200">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 flex items-center justify-center shadow-lg border-2 border-yellow-200">
                         <Rocket className="w-6 h-6 text-white drop-shadow" />
                     </div>
                 </div>

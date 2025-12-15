@@ -30,7 +30,7 @@ const DifficultyIndicator = ({ level }: { level: string }) => {
     );
 };
 
-export default async function DomainWithTracksCard({ profile }: { profile: any }) {
+export default async function LearningTracksCard({ profile }: { profile: any }) {
     const pageSize = 4;
     const domainId = profile?.domain?.id;
 
@@ -54,7 +54,7 @@ export default async function DomainWithTracksCard({ profile }: { profile: any }
 
             {/* --- Header --- */}
             <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 
                                 flex items-center justify-center shadow-md border border-yellow-300">
                     <DynamicIcon name={profile?.domain?.icon} className="w-6 h-6 text-white" />
                 </div>
@@ -100,8 +100,6 @@ export default async function DomainWithTracksCard({ profile }: { profile: any }
                         </Link>
                     );
                 })}
-
-
 
                 {/* --- +X MORE BADGE --- */}
                 {remaining > 0 && (

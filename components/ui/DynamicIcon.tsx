@@ -1,4 +1,8 @@
 import {
+  CheckCircle,
+  Compass,
+  Rocket,
+  Play,
   User,
   Activity,
   Code2,
@@ -29,6 +33,10 @@ import {
 } from "lucide-react"
 
 const icons = {
+  CheckCircle,
+  Compass,
+  Rocket,
+  Play,
   User,
   Activity,
   Code2,

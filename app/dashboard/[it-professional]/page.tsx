@@ -1,7 +1,8 @@
 import StageProgress from "../components/StageProgress";
 import StageCard from "../components/Stage";
 import BadgeCard from "../components/Badge";
-import DomainWithTracksCard from "../components/Domain";
+import Bootcamp from "../components/Bootcamp";
+import LearningTracksCard from "../components/Domain";
 import MilestoneCard from "../components/Milestone";
 import RecommendedActions from "../components/RecommendedActions";
 import { getProfile } from "@/lib/controllers/profileController"
@@ -22,10 +23,10 @@ export default async function DashboardOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         { /* <StageCard profile={profile} /> */}
         <MilestoneCard profile={profile} />
-        <DomainWithTracksCard profile={profile} />
+        <LearningTracksCard profile={profile} />
+        <Bootcamp profile={profile}/>
         <BadgeCard profile={profile} />
         
-
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
