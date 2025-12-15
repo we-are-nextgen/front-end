@@ -63,7 +63,7 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-3 py-2 text-xs border-b-2 transition
+            className={`px-3 py-2 text-xs border-b-2 transition cursor-pointer
               ${
                 activeTab === tab.id
                   ? "border-yellow-500 text-yellow-600"
@@ -106,7 +106,7 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
                     <div className={`text-sm font-semibold ${cfg.color}`}>
                       {count}
                     </div>
-                    <div className={`text-[10px] ${cfg.color}`}>
+                    <div className={`text-[9px] ${cfg.color}`}>
                       {cfg.label}
                     </div>
                   </div>

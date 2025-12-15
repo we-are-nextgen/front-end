@@ -12,3 +12,18 @@ export async function getBootcampStats() {
   );
 }
 
+/**
+ * entroll current user to a bootcamp, thorugh bootcamp start instance
+ * @param bootcampStartId 
+ * @returns 
+ */
+export async function enrollUser(bootcampStartId: number) {
+  const session = await getServerSession(authOptions);
+  const payload = {
+    userId: session?.user?.email
+  };
+  return restClient(`bootcamp/${bootcampStartId}/enroll`, {
+    method: "POST",
+    data: payload,
+  });
+}
