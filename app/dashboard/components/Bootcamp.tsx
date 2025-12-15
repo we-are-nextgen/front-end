@@ -40,10 +40,11 @@ export default async function Bootcamp({ profile = null }: { profile?: any }) {
                                 flex items-center justify-center shadow-md border border-yellow-300">
             <DynamicIcon name="MessageSquare" className="w-6 h-6 text-white" />
         </div>
-        <h2 className="font-semibold text-gray-800">Bootcamp Status</h2>
+        <h2 className="font-semibold text-gray-800">Bootcamps</h2>
       </div>
 
       {/* Status icons */}
+      <h3>Stats</h3>
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
         {BOOTCAMP_STATUS_ORDER.map((status) => {
           const count = stats[status];
