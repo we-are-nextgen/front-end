@@ -12,6 +12,17 @@ const BOOTCAMP_STATUS_ORDER = [
   "COMPLETED",
 ];
 
+type UserBootcamp = {
+  bootcampId: number;
+  bootcampName: string;
+  bootcampVersion: string;
+  bootcampStartId: number;
+  cohortName: string;
+  durationWeeks: number;
+  startedAt: string;
+  status: string;
+};
+
 const BOOTCAMP_STATUS_CONFIG: Record<
   string,
   { label: string; icon: string; color: string }
@@ -34,7 +45,24 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
   const [activeTab, setActiveTab] = useState("mine");
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [myBootcamps, setMyBootcamps] = useState<UserBootcamp[]>([]);
+    useEffect(() => {
+        Promise.all([
+        fetch("/api/bootcamp/stats").then((r) => r.json()),
+        fetch("/api/bootcamp/user").then((r) => r.json()),
+        ])
+        .then(([statsData, userBootcamps]) => {
+            setStats(statsData);
+            setMyBootcamps(userBootcamps);
+        })
+        .catch(() => {
+            setStats({});
+            setMyBootcamps([]);
+        })
+        .finally(() => setLoading(false));
+    }, []);
 
+/*
   useEffect(() => {
     fetch("/api/bootcamp/stats")
       .then((res) => {
@@ -44,7 +72,7 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
       .then((data) => setStats(data))
       .catch(() => setStats({}))
       .finally(() => setLoading(false));
-  }, []);
+  }, []);*/
 
   return (
     <div className="relative p-4 rounded-xl bg-white shadow-xl">
@@ -75,7 +103,7 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
         ))}
       </div>
 
-      {/* Content */}
+      {/* OVERVIEW */}
       {activeTab === "overview" && (
         <>
           {loading && (
@@ -122,11 +150,51 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
           Upcoming bootcamps will be shown here
         </div>
       )}
-
+      
+       {/* MY BOOTCAMPS */}
       {activeTab === "mine" && (
-        <div className="text-sm text-gray-600">
-          My enrolled bootcamps will be shown here
-        </div>
+        <>
+          {loading && <div className="text-sm text-gray-500">Loading bootcamps…</div>}
+
+          {!loading && myBootcamps.length === 0 && (
+            <div className="text-sm text-gray-500">You are not enrolled in any bootcamp</div>
+          )}
+
+          <div className="space-y-2">
+            {myBootcamps.map((bc) => {
+              const cfg = BOOTCAMP_STATUS_CONFIG[bc.status];
+              return (
+                <div
+                  key={bc.bootcampStartId}
+                  className="p-3 border rounded-lg flex items-center justify-between bg-gray-50"
+                >
+                  <div>
+                    <div className="font-medium text-sm text-gray-800">
+                      {bc.bootcampName}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Cohort: {bc.cohortName} • {bc.durationWeeks} weeks
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {cfg && (
+                      <>
+                        <DynamicIcon
+                          name={cfg.icon}
+                          className={`w-4 h-4 ${cfg.color}`}
+                        />
+                        <span className={`text-xs font-medium ${cfg.color}`}>
+                          {cfg.label}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );

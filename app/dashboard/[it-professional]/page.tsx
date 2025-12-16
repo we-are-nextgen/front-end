@@ -24,14 +24,13 @@ export default async function DashboardOverview() {
         { /* <StageCard profile={profile} /> */}
         <MilestoneCard profile={profile} />
         <LearningTracksCard profile={profile} />
-        <Bootcamp profile={profile}/>
         <BadgeCard profile={profile} />
-        
+        { /* <RecommendedActions domain="engineering" /> */ }
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
+        <Bootcamp profile={profile}/>
         <StageProgress profile={profile} journey={userJourney} />
-        <RecommendedActions domain="engineering" />
       </div>
     </div>
   );

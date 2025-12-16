@@ -27,3 +27,14 @@ export async function enrollUser(bootcampStartId: number) {
     data: payload,
   });
 }
+
+
+/**
+ * get user bootcamps
+ * @returns 
+ */
+export async function getUserBootcamps() {
+  const session = await getServerSession(authOptions);
+  const email = session?.user?.email;
+  return restClient(`bootcamp/user?email=${email}`);
+}
