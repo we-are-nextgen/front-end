@@ -29,7 +29,9 @@ import {
   Search,
   DollarSign,
   Award,
-  Blocks
+  Blocks,
+  SquareArrowOutUpRight,
+  SquareArrowUpRight
 } from "lucide-react"
 
 const icons = {
@@ -63,7 +65,9 @@ const icons = {
   Search,
   DollarSign,
   Award,
-  Blocks
+  Blocks,
+  SquareArrowOutUpRight,
+  SquareArrowUpRight
 };
 
 type IconName = keyof typeof icons;
