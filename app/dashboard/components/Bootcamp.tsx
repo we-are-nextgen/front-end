@@ -2,19 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { BOOTCAMP_STATUS_ORDER, UserBootcamp, UpcomingBootcamp} from "../../types/bootcamp"
-
-const BOOTCAMP_STATUS_CONFIG: Record<
-    string,
-    { label: string; icon: string; color: string } > = {
-    OPEN_FOR_ENROLLMENT: { label: "Enroll", icon: "Play", color: "text-blue-600" },
-    SARTED: { label: "Started", icon: "Play", color: "text-blue-600" },
-    KICKOFF: { label: "Kickoff", icon: "Rocket", color: "text-purple-600" },
-    ORIENTATION: { label: "Orien", icon: "Compass", color: "text-amber-600" },
-    CORE_MODULES: { label: "Core", icon: "Layers", color: "text-green-600" },
-    PRACTICE_MODULES: { label: "Practice", icon: "Wrench", color: "text-orange-600" },
-    COMPLETED: { label: "Completed", icon: "CheckCircle", color: "text-emerald-600" },
-};
+import { BOOTCAMP_STATUS_CONFIG, BOOTCAMP_STATUS_ORDER, UserBootcamp, UpcomingBootcamp} from "@/app/types/bootcamp";
 
 const TABS = [
     { id: "mine", label: "My Bootcamps" },
@@ -164,8 +152,8 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
                                             className="p-3 border rounded-lg bg-gray-50 flex flex-col justify-between shadow-gray-500 shadow-md"
                                         >
                                             <div>
-                                                <a href={`/bootcampstart/${bc.userBootcampId}`}>
-                                                    <DynamicIcon name="SquareArrowOutUpRight" className="absolute right-10" />
+                                                <a href={`/userbootcamp/${bc.userBootcampId}`}>
+                                                    <DynamicIcon name="SquareArrowOutUpRight" className="w-4 h-4 absolute right-7" />
                                                 </a>
                                                 <div className="font-medium text-xs text-gray-800">
                                                     {bc.bootcampName}

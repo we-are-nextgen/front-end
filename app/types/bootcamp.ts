@@ -43,3 +43,17 @@ export interface EnrollmentStatus {
   numberOfApplicants: number;
   amIEnrolled: boolean;
 }
+
+
+
+export const BOOTCAMP_STATUS_CONFIG: Record<
+    string,
+    { label: string; icon: string; color: string } > = {
+    OPEN_FOR_ENROLLMENT: { label: "Enrollment", icon: "Play", color: "text-blue-600" },
+    SARTED: { label: "Started", icon: "Play", color: "text-blue-600" },
+    KICKOFF: { label: "Kickoff", icon: "Rocket", color: "text-purple-600" },
+    ORIENTATION: { label: "Orien", icon: "Compass", color: "text-amber-600" },
+    CORE_MODULES: { label: "Core", icon: "Layers", color: "text-green-600" },
+    PRACTICE_MODULES: { label: "Practice", icon: "Wrench", color: "text-orange-600" },
+    COMPLETED: { label: "Completed", icon: "CheckCircle", color: "text-emerald-600" },
+};
