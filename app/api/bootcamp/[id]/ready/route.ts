@@ -3,7 +3,7 @@ import { isBootcampReadyForEnrollment } from "@/lib/controllers/bootcampControll
 
 export async function GET(
   req: Request,
-  context: { params: { id: number } } 
+  context: { params: { id: string } } 
 ) {
   const params = await context.params; 
   const id = params.id;

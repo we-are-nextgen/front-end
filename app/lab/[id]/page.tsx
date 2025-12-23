@@ -8,7 +8,7 @@ interface LabPageProps {
 
 export default async function LabPage({ params }: LabPageProps) {
   const { id } = await params; // unwrap the Promise
-  const lab = await getLabWithProgress(Number(id));
+  const lab = await getLabWithProgress(id);
   if (!lab) return <div>No lab found</div>;
   return <LabView labWithProgress={lab}/>;
 }

@@ -3,7 +3,7 @@ import "server-only";
 
 let tracks: any[] | undefined;
 
-export async function getTracks(domainId:number): Promise<any> {
+export async function getTracks(domainId:string): Promise<any> {
     tracks = await restClient<any>(`/tracks/domain/${domainId}`);
     return tracks;
 }
@@ -11,7 +11,7 @@ export async function getTracks(domainId:number): Promise<any> {
 
 export async function getPaginatedTracks({ domainId, page , pageSize
 }: {
-  domainId: number;
+  domainId: string;
   page?: number;
   pageSize?: number;
 }): Promise<any> {

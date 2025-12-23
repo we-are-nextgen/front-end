@@ -11,6 +11,7 @@ export async function getProfile(): Promise<any> {
     //if (profile) return profile;
     const session = await getServerSession(authOptions);
     profile = await restClient<any>(`/profile/userid/${session?.user?.email}`);
+    //console.log(profile);
     return profile;
 }
  

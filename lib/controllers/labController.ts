@@ -6,7 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 let profile: any | undefined;
 
-export async function completeLab(labId: number, trackId: number) {
+export async function completeLab(labId: string, trackId: number) {
   const session = await getServerSession(authOptions);
   return restClient(
     `progress/lab/complete/${labId}?email=${session?.user?.email}&trackId=${trackId}`,
@@ -15,13 +15,13 @@ export async function completeLab(labId: number, trackId: number) {
 }
 
 
-export async function getLab(labId: number) {
+export async function getLab(labId: string) {
   return restClient(
     `labs/${labId}`
   );
 }
 
-export async function getLabWithProgress(labId: number) {
+export async function getLabWithProgress(labId: string) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   return restClient(

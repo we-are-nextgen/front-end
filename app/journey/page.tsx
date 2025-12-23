@@ -8,7 +8,7 @@ import Link from "next/link"
 
 export default async function ProfessionalJourneyPage({ searchParams }: { searchParams?: { [key: string]: string } }) {
   const params = await searchParams;
-  const id = params.id ? Number(params?.id) : undefined; // searchParams values are always strings, convert to number
+  const id = params?.id ? params?.id : undefined; // searchParams values are always strings, convert to number
   const journeysData = await getJourney(id);
   console.log(journeysData); // Debugging line
   const stages = journeysData.stages; 

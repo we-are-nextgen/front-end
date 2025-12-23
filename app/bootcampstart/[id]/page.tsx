@@ -1,14 +1,17 @@
 
 import HeaderSection from "../components/Header";
 import { getBootcamp } from "@/lib/controllers/bootcampController";
-
+import { use } from "react";
 
 interface PageProps {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }
 
-export default async function BootcampStartPage({ params }: PageProps) {
-  const bootcamp = await getBootcamp(params.id);
+export default  function BootcampStart({ params }: PageProps) {
+  const { id } = use(params);
+  const bootcampId = id;
+  // data fetching must still be awaited
+  const bootcamp = use(getBootcamp(bootcampId));
 
   return (
     <div className="space-y-6">

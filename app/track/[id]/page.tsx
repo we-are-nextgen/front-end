@@ -12,7 +12,7 @@ import { ArrowLeft } from "lucide-react"
 
 export default async function TrackPage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
-  const trackId =  Number(id);
+  const trackId =  id;
   const track = await getTrackById(trackId);
   const labs = track?.labs;
   const progress= await getUserTrackProgress(trackId); 

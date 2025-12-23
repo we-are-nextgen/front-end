@@ -2,7 +2,7 @@ import { restClient } from "@/lib/services/restClient";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
-export async function gradeExercise(labId: number, exerciseId: number, answer: any) {
+export async function gradeExercise(labId: string, exerciseId: number, answer: any) {
   const session = await getServerSession(authOptions);
   const payload = {
     labId: labId,

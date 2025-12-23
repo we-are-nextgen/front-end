@@ -8,6 +8,6 @@ export async function GET(
   // unwrap the params
   const params = await context.params; // <-- await the params
   const labId = params.id;
-  const lab = await getLabWithProgress(Number(labId));
+  const lab = await getLabWithProgress(labId);
   return NextResponse.json(lab);
 }

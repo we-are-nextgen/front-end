@@ -1,10 +1,11 @@
-"use client";
 
-import { useEffect, useState, use } from "react";
+
 import HeaderSection from "../components/Header";
 import DescriptionSection from "../components/Description"
 import CurriculumSection from "../components/Curriculum"
+import { getBootcamp } from "@/lib/controllers/bootcampController";
 
+import { use } from "react";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
@@ -13,31 +14,11 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function BootcampStart({ params }: PageProps) {
-  // unwrap params safely
+export default  function Bootcamp({ params }: PageProps) {
   const { id } = use(params);
-
-  const [bootcamp, setBootcamp] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/bootcamp/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch bootcamp");
-        return res.json();
-      })
-      .then(setBootcamp)
-      .catch(() => setBootcamp(null))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) {
-    return <div className="text-sm text-gray-500">Loading...</div>;
-  }
-
-  if (!bootcamp) {
-    return <div className="text-sm text-red-500">Bootcamp not found</div>;
-  }
+  const bootcampId = id;
+  // data fetching must still be awaited
+  const bootcamp = use(getBootcamp(bootcampId));
 
   return (
     <div className="space-y-6 m-2">

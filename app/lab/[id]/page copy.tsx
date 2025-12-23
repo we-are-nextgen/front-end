@@ -8,7 +8,7 @@ import { getLab } from "@/lib/controllers/labController";
 
 export default async function LabPage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
-  const labId =  Number(id);
+  const labId =  id;
   const lab = await getLab(labId);
 
   //const res = await fetch(`/api/lab/${labId}`, { method: "POST" });

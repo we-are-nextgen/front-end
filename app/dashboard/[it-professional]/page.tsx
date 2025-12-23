@@ -14,7 +14,7 @@ import { Rocket, Circle, CheckCircle, ArrowRight, Play } from "lucide-react";
 
 export default async function DashboardOverview() {
   const profile = await getProfile();
-  const currentProgress = profile?.userProgress?.find(x => x.status === "In-Progress");
+  //const currentProgress = profile?.userProgress?.find(x => x.status === "In-Progress");
   const userJourney = await getJourney(profile?.stage?.journeyId);
   return (
     <div className="space-y-6">

@@ -78,18 +78,6 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
             .finally(() => setLoading(false));
     }, []);
 
-    /*
-      useEffect(() => {
-        fetch("/api/bootcamp/stats")
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch bootcamp stats");
-            return res.json();
-          })
-          .then((data) => setStats(data))
-          .catch(() => setStats({}))
-          .finally(() => setLoading(false));
-      }, []);*/
-
     return (
         <div className="relative p-4 rounded-xl bg-white shadow-xl">
             {/* Header */}
@@ -176,7 +164,7 @@ export default function Bootcamp({ profile = null }: { profile?: any }) {
                                             className="p-3 border rounded-lg bg-gray-50 flex flex-col justify-between shadow-gray-500 shadow-md"
                                         >
                                             <div>
-                                                <a href={`/bootcampstart/${bc.bootcampId}`}>
+                                                <a href={`/bootcampstart/${bc.userBootcampId}`}>
                                                     <DynamicIcon name="SquareArrowOutUpRight" className="absolute right-10" />
                                                 </a>
                                                 <div className="font-medium text-xs text-gray-800">

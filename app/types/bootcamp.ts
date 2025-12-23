@@ -12,10 +12,11 @@ export const BOOTCAMP_STATUS_ORDER = [
 ];
 
 export type UserBootcamp = {
-    bootcampId: number;
+    bootcampId: string;
     bootcampName: string;
     bootcampVersion: string;
-    bootcampStartId: number;
+    bootcampStartId: string;
+    userBootcampId: string;
     cohortName: string;
     durationWeeks: number;
     startedAt: string;
@@ -23,7 +24,7 @@ export type UserBootcamp = {
 };
 
 export type UpcomingBootcamp = {
-    id: number;
+    id: string;
     name: string;
     description: string;
     durationWeeks: number;
@@ -34,8 +35,9 @@ export type UpcomingBootcamp = {
 };
 
 export interface EnrollmentStatus {
-  id: number;
-  bootcampStartId: number;
+  id: string;
+  bootcampStartId: string;
+  userBootcampId: string;
   status: "OPEN_FOR_ENROLLMENT" | string;
   capacity: number;
   numberOfApplicants: number;

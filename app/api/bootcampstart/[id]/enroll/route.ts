@@ -3,7 +3,7 @@ import { enrollUser } from "@/lib/controllers/bootcampController";
 
 export async function POST(
   req: Request,
-  context: { params: { id: number } }
+  context: { params: { id: string } }
 ) {
   const params = await context.params; // <-- await the params
   const bootcampStartId = params.id;

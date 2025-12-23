@@ -12,11 +12,14 @@ export async function getJourneys(): Promise<any[]> {
     return journeys;
 }
 
-export async function getJourney(journeyId:number): Promise<any> {
+export async function getJourney(journeyId:string): Promise<any> {
     if (journeys) 
         return journeys.find(j => j.id === journeyId);
-    //console.log("Fetching from back-end"); // Debugging line
     journeys = await restClient<any[]>("/journeys");
+    //console.log("================");
+    //console.log(journeyId);
+    //console.log(journeys);
+    //console.log("================");
     return journeys.find(j => j.id === journeyId);
 }
  

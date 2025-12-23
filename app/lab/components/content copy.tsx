@@ -73,7 +73,7 @@ export default function LabContent({ labWithProgress }) {
           const payload = {
             labId: lab.id,
             submissions: Object.entries(answers).map(([exId, answer]) => ({
-              exerciseId: Number(exId),
+              exerciseId: exId,
               answer,
             })),
           };

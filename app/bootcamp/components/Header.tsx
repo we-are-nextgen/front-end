@@ -30,22 +30,25 @@ export default function HeaderSection({ bootcamp }: { bootcamp: any }) {
   
   const enrolled = enrollment?.amIEnrolled;
 
-  async function handleEnroll() {
-    const res = await fetch(`/api/bootcampstart/${enrollment.bootcampStartId}/enroll`, { method: "POST" });
+  async function handleEnroll(bootcampStartId:number) {
+    const res = await fetch(`/api/bootcampstart/${bootcampStartId}/enroll`, { method: "POST" });
     const userBootcamp = await res.json();
-    router.push(`/bootcampstart/${userBootcamp.bootcampStartId}`);
+    router.push(`/userbootcamp/${userBootcamp.id}`);
   }
 
-  function toBootcampStart(){
-    router.push(`/bootcampstart/${enrollment?.bootcampStartId}`);
+  function toUserBootcamp(){
+    router.push(`/userbootcamp/${enrollment?.userBootcampId}`);
   }
-
+  {!loading && (
+      console.log(enrollment)
+    )}
   return (
     <div className="relative border rounded-xl p-5 bg-background shadow-sm">
       {/* Actions */}
       <div className="absolute right-5 top-5 flex gap-2">
         {!loading && canEnroll && (
-          <button onClick={handleEnroll}
+          <button 
+            onClick={() => handleEnroll(enrollment?.bootcampStartId)}
             className="px-4 py-2 bg-green-600 text-white rounded-lg shadow 
                        hover:bg-green-700 transition cursor-pointer"
           >
@@ -54,7 +57,7 @@ export default function HeaderSection({ bootcamp }: { bootcamp: any }) {
         )}
 
         {!loading && enrolled && (
-        <button onClick={toBootcampStart}
+        <button onClick={toUserBootcamp}
           className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow 
                      hover:bg-indigo-700 transition cursor-pointer"
         >

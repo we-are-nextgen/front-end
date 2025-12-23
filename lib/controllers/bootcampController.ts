@@ -6,8 +6,15 @@ import { restClient } from "../services/restClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-let profile: any | undefined;
-
+/**
+ * 
+ * @returns : example return 
+ * {
+    "OPEN_FOR_ENROLLMENT": 3,
+    "COMPLETED": 1,
+    "KICKOFF": 1
+  }
+ */
 export async function getBootcampStats() {
   return restClient(
     `/bootcamp/status/count`
@@ -19,7 +26,7 @@ export async function getBootcampStats() {
  * @param bootcampStartId 
  * @returns 
  */
-export async function enrollUser(bootcampStartId: number) {
+export async function enrollUser(bootcampStartId: string) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   return restClient(`bootcamp/${bootcampStartId}/enroll?email=${email}`, {
@@ -49,19 +56,29 @@ export async function getStartingSoonBootcamps(weeks: number) {
 
 /**
  * get bootcamp by id 
- * @param id 
+ * @param bootcamp id 
  * @returns 
  */
-export async function getBootcamp(id: number) {
+export async function getBootcamp(id: string) {
   return restClient(`bootcamp/${id}`);
+}
+
+
+/**
+ * get bootcamp, bootcampstart details by user bootcamp Id 
+ * @param id : user bootcamp Id
+ * @returns 
+ */
+export async function getUserBootcamp(id: string) {
+  return restClient(`bootcamp/user/${id}`);
 }
 
 /**
  * check if the bootcamp is ready for enrollment 
- * @param id 
+ * @param id: bootcamp id 
  * @returns 
  */
-export async function isBootcampReadyForEnrollment(id: number){
+export async function isBootcampReadyForEnrollment(id: string){
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
   return restClient(`bootcamp/${id}/ready?email=${email}`);
