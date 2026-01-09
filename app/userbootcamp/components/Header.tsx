@@ -12,7 +12,7 @@ export default function HeaderSection({ userBootcampStart }: { userBootcampStart
   const statusCfg = BOOTCAMP_STATUS_CONFIG[bootcampStart.status];
   
   return (
-    <div className="relative border rounded-xl p-5 bg-background shadow-sm">
+    <div className="relative border rounded-xl p-5 bg-background shadow-md">
       
        <Link href="/dashboard/it-professional" className="absolute right-2">
         <Button variant="ghost" className="mb-1 cursor-pointer">
@@ -33,6 +33,7 @@ export default function HeaderSection({ userBootcampStart }: { userBootcampStart
         <span>Version {bootcamp.version}</span>
         <span>⏳ {bootcamp.durationWeeks} weeks</span>
         <span>🗓 Started At: {new Date(bootcampStart.startedAt).toLocaleDateString()} - {new Date(bootcampStart.startedAt).toLocaleTimeString()} </span>
+        <span>🗓 You Joined On: {new Date(userBootcampStart.joinDate).toLocaleDateString()} </span>
       </div>
       <div className="flex flex-wrap gap-4 text-sm text-foreground mt-2">
           <span>Cohort: {bootcampStart.cohortName}</span>

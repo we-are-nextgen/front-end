@@ -41,7 +41,7 @@ export default function StageProgress({ profile = null, journey = null}: { profi
         <div className="absolute left-2 top-0 h-full w-[2px] bg-gray-300"></div>
 
         <ul className="space-y-6">
-          {stages.map((s) => {
+          {stages?.map((s) => {
             const isCompleted = s.sequence < currentStageSequence;
             const isCurrent = s.sequence === currentStageSequence;
             
