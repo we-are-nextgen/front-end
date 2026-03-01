@@ -38,7 +38,7 @@ export default function UserBootcamp({ params }: PageProps) {
         >
           <Outcomes outcomes={userBootcampStart?.bootcampStart?.bootcamp?.outcomes || []} />
           <Team users={userBootcampStart?.bootcampStart?.team || []} />
-          <LayersProgress layers={userBootcampStart?.bootcampProgress?.layerProgress || []} />
+          <LayersProgress layers={userBootcampStart?.bootcampStart?.bootcamp?.layers || []} />
         </div>
       </div>
     </div>

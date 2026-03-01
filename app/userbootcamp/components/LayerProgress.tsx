@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, CheckCircle } from "lucide-react";
 
 export default function LayersProgress({ layers }) {
+  
   const [open, setOpen] = useState(false);
   const [openLayer, setOpenLayer] = useState<string | null>(null);
 
