@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Domains } from "@/components/it-domains"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
