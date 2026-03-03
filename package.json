@@ -1,12 +1,12 @@
 {
-  "name": "my-v0-project",
+  "name": "nextgen-front-end",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start -H 0.0.0.0 -p 3000"
   },
   "dependencies": {
     "@auth/core": "latest",

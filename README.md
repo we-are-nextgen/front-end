@@ -25,3 +25,6 @@ make sure users keycloak session is deleted once they log out, as default behavi
 # 4 - protect url
 create /app/middleware.ts
 
+
+# Github authorization flow 
+https://datatracker.ietf.org/doc/html/rfc6749#section-4.1

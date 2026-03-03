@@ -1,0 +1,7 @@
+NEXTAUTH_SECRET=d4657e9a36fcac34fdc9f8152f07e5d1f142d6879a4fa4bdca61233212f0ca3c
+NEXTAUTH_URL=http://localhost:3000
+KEYCLOAK_ISSUER=http://localhost:9090/realms/myrealm
+KEYCLOAK_CLIENT_ID=nextjs-frontend
+
+
+NEXT_PUBLIC_API_URL=http://localhost:8080

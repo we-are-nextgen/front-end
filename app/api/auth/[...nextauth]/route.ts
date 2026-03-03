@@ -31,8 +31,8 @@ export const authOptions = {
 const keycloak = KeycloakProvider({
     clientId: process.env.KEYCLOAK_CLIENT_ID!,
     clientSecret: "", // No secret for public clients
-    issuer: process.env.KEYCLOAK_ISSUER!,
-    checks: ["pkce"], // Enable PKCE flow
+    issuer: process.env.KEYCLOAK_ISSUER!
+    //checks: ["pkce"], // Enable PKCE flow
 });
 
 // this performs the final handshake for the keycloak
